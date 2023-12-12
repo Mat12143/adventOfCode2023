@@ -1,44 +1,35 @@
-numberCardsToPlay = []
+from queue import Queue
 
-
-class Card:
-
-    def __init__(self, wcardNumber, inningNumbers, givenNumbers):
-        self.winningNumbers = winningNumbers
-        self.givenNumbers = givenNumbers
-        self.cardNumber = cardNumber
-    
-    def solveCard(self):
-
-        i = self.cardNumber
-
-        for number in self.givenNumbers:
-            for wNumber in self.winningNumbers:
-                if (number == wNumber):
-                    i += 1
-                    numberCardsToPlay.append(i)
+queue = Queue()
+matchesPerCard = {}
+total = 0
 
 with open("input.txt", "r") as f:
 
-    for gameLine in f.read().split("\n"):
+    for gameLine in f.readlines():
         
-        card = gameLine.split(":")
-        cardNumber = card[0].replace("Card ", "")
-        cardNumbers = card[1]
+        cardID, numbers = gameLine.split(":")
 
-        numbers = cardNumbers.split("|")
-        cardNumbers = numbers[0]
-        winningNumbers = numbers[1]
+        cardID = int(cardID.replace("Card ", ""))
 
-        cardNumbers = cardNumbers.split(" ")
-        winningNumbers = winningNumbers.split(" ")
+        winningNumbers, ourNumbers = numbers.split("|")
 
-        cardValue = 0
+        ourNumbers =  set(ourNumbers.split())
+        winningNumbers = set(winningNumbers.split())
+
+        matches = ourNumbers & winningNumbers
+
+        matchesPerCard[cardID] = len(matches)
+
+        queue.put(cardID)
 
 
+while not queue.empty():
+    total += 1
 
-        if (len(wNumber) == 0 or len(number) == 0): continue
+    k = queue.get()
 
-        if (int(number) != int(wNumber)): continue
+    for i in range(k + 1, k + matchesPerCard[k] + 1):
+        queue.put(i)
 
-        totalSum += cardValue
+print(total)

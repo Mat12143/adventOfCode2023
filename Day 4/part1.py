@@ -2,32 +2,19 @@ with open("input.txt", "r") as f:
 
     totalSum = 0
 
-    for gameLine in f.read().split("\n"):
+    for gameLine in f.readlines():
         
-        card = gameLine.split(":")
-        cardNumber = card[0].replace("Card ", "")
-        cardNumbers = card[1]
+        cardID, numbers = gameLine.split(":")
 
-        numbers = cardNumbers.split("|")
-        cardNumbers = numbers[0]
-        winningNumbers = numbers[1]
+        cardID = int(cardID.replace("Card ", ""))
 
-        cardNumbers = cardNumbers.split(" ")
-        winningNumbers = winningNumbers.split(" ")
+        winningNumbers, ourNumbers = numbers.split("|")
 
-        cardValue = 0
+        ourNumbers =  set(ourNumbers.split())
+        winningNumbers = set(winningNumbers.split())
 
-        for number in cardNumbers:
+        matches = ourNumbers & winningNumbers
 
-            for wNumber in winningNumbers:
-
-                if (len(wNumber) == 0 or len(number) == 0): continue
-
-                if (int(number) != int(wNumber)): continue
-
-                if (cardValue != 0): cardValue *= 2
-                else: cardValue += 1
-
-        totalSum += cardValue
+        if matches: totalSum += 2 ** (len(matches) - 1)
         
 print(totalSum)
